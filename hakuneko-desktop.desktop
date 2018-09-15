@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=0.4.0-1
+Type=Application
+Name=HakuNeko Desktop
+GenericName=Manga Downloader
+Exec=/app/hakuneko-desktop/hakuneko
+Icon=org.hakuneko.Hakuneko-desktop
+Categories=Network;FileTransfer;
