@@ -54,7 +54,7 @@ modules:
   
   sources:
   - type: archive
-    path: hakuneko-0.4.0.tar.gz
+    url: https://github.com/manga-download/hakuneko/archive/0.4.0.tar.gz
     sha256: 544ac9f01999e5fa2f9bcaadfe357ef5322b2a7edf7b536223d96cad80153529
   - type: file
     url: https://github.com/electron/electron/releases/download/v2.0.7/electron-v2.0.7-linux-x64.zip
