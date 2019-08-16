@@ -19,11 +19,11 @@ finish-args:
 - "--env=DCONF_USER_CONFIG_DIR=.config/dconf"
 
 
-command: "/app/hakuneko-desktop/hakuneko"
+command: start
 
 modules:
 - name: nodejs
-  cleanup: 
+  cleanup:
   - "/include"
   - "/share"
   - "/app/lib/node_modules/npm/changelogs"
@@ -37,35 +37,34 @@ modules:
     sha256: 40a6eb51ea37fafcf0cfb58786b15b99152bec672cccf861c14d1cca0ad4758a
 
 - name: hakuneko
-  no-autogen: true
   buildsystem: simple
   build-options:
-    build-args: 
+    build-args:
     - "--share=network"
   build-commands:
-  - npm install --prefix=./asar asar@0.14.3
-  - ln -s /run/build/hakuneko/asar/node_modules/asar/bin/asar.js /app/bin/asar
-  - install -Dm644 electron-v* electron/redist/electron-v2.0.7-linux-x64.zip
-  - echo "; build \"\$1\" \"\$2\"" >> electron/build.sh
-  - electron/build.sh linux-x64 linux-flatpak/usr/lib/hakuneko-desktop
-  - rm /app/bin/asar
-  - cp -R electron/build/linux-flatpak/usr/lib/hakuneko-desktop /app
-  - install -Dm766 electron/res/logo_256_s.png /app/share/icons/hicolor/256x256/apps/org.hakuneko.Hakuneko-desktop.png
-  
+  - mkdir files
+  - for deb in ./*.deb ; do ar p ${deb} data.tar.xz | unxz | tar x -C files; done
+  - cp -R files/usr/lib/* /app/lib
+  - install -Dm555 files/usr/share/icons/hicolor/256x256/apps/hakuneko-desktop.png /app/share/icons/hicolor/256x256/apps/org.hakuneko.Hakuneko-desktop.png
   sources:
-  - type: archive
-    url: https://github.com/manga-download/hakuneko/archive/0.4.0.tar.gz
-    sha256: 544ac9f01999e5fa2f9bcaadfe357ef5322b2a7edf7b536223d96cad80153529
   - type: file
-    url: https://github.com/electron/electron/releases/download/v2.0.7/electron-v2.0.7-linux-x64.zip
-    sha256: 617f547285452940cf6be8af22075640989261f3f6fae8ab327426f0434b446c
+    url: https://github.com/manga-download/hakuneko/releases/download/v5.0.8/hakuneko-desktop_5.0.8_linux_amd64.deb
+    sha256: 924df1d7a0ab54b918529165317e4428b423c9045548d1e36bd634914f7957f0
 
 - name: startup
-  no-autogen: true
+  buildsystem: simple
+  build-commands:
+  - install -Dm555 start /app/bin/start
+  sources:
+  - type: script
+    dest-filename: start
+    commands:
+    - /app/lib/hakuneko-desktop/hakuneko --no-sandbox
+
+- name: res
   buildsystem: simple
   build-commands:
   - install -Dm766 hakuneko-desktop.desktop /app/share/applications/org.hakuneko.Hakuneko-desktop.desktop
-
   sources:
   - type: file
     path: hakuneko-desktop.desktop
